@@ -3,8 +3,7 @@ import scrapy
 class CbdScoutsSpider(scrapy.Spider):
     name = 'cbd_scouts_spider'
     allowed_domains = ['cbdscouts.com']
-    start_urls = ['https://cbdscouts.com/cbd_companies-sitemap.xml 2021-03-29T14:10:00+00:0'] # Replace with the actual directory URL
-
+    start_urls = ['https://cbdscouts.com/cbd_companies-sitemap.xml
     def parse(self, response):
         # Extract company listing URLs
         for href in response.css('a.company-listing::attr(href)'):
