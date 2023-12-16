@@ -1,0 +1,25 @@
+import scrapy
+
+class CbdScoutsSpider(scrapy.Spider):
+    name = 'cbd_scouts_spider'
+    allowed_domains = ['cbdscouts.com']
+    start_urls = ['https://www.cbdscouts.com/directory/'] # Replace with the actual directory URL
+
+    def parse(self, response):
+        # Extract company listing URLs
+        for href in response.css('a.company-listing::attr(href)'):
+            url = response.urljoin(href.extract())
+            yield scrapy.Request(url, callback=self.parse_company)
+
+        # Follow pagination links and repeat
+        next_page = response.css('a.next-page::attr(href)').get()
+        if next_page is not None:
+            yield response.follow(next_page, self.parse)
+
+    def parse_company(self, response):
+        # Extract details from company page
+        yield {
+            'name': response.css('h1.company-name::text').get(),
+            'phone': response.css('p.phone-number::text').get(),
+            'email': response.css('p.email-address::text').get(),
+        }
